@@ -18,11 +18,11 @@ jobs:
 
 
 
-  push:
-    branches: 
-    # ["main", "another_branch", "feature_branch"] - One way of providing a list in yaml
-      # -"main"
-      # -"anotherbranch"
-  pull_requests:
-    branches:
-     -"test_branch"    
+  # push:
+  #   branches: 
+  #   # ["main", "another_branch", "feature_branch"] - One way of providing a list in yaml
+  #     # -"main"
+  #     # -"anotherbranch"
+  # pull_requests:
+  #   branches:
+  #    -"test_branch"    
