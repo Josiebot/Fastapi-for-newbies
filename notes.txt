@@ -1,0 +1,5 @@
+Docker notes 
+# 
+    # (Ir is very important to pass it globally because named volumes are usually designed so that multiple containers can access them. So you define it down here first technically then multiple containers can reference them by calling that )
+
+  # There are different ways of figuring out the name/address of the postgres database. Understanding that Docker compose usually creates a custom network and a docker network often uses DNS SO WE CAN say that to reach postgres database, we can use DNS

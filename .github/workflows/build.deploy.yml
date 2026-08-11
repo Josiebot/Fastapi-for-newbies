@@ -1,0 +1,28 @@
+name: Build and Deploy Code
+
+on: [push, pull_request]
+
+jobs: 
+  job1:
+    runs-on: ubuntu-latest
+    steps: 
+      - name: pulling git repo
+        uses: actions/checkout@v2
+      - name: say hi to Jossy
+        run: echo "you are getting there Jossy"
+
+
+
+
+
+
+
+
+  push:
+    branches: 
+    # ["main", "another_branch", "feature_branch"] - One way of providing a list in yaml
+      # -"main"
+      # -"anotherbranch"
+  pull_requests:
+    branches:
+     -"test_branch"    

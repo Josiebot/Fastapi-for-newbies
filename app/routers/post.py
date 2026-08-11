@@ -120,7 +120,11 @@ def update_post(id:int, post:schemas.PostCreate,db:Session = Depends(get_db), cu
     
     if updated_post.user_id != current_user.id:
       raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail= "Not authorized to perform requested action")
-    post_query.update ({'title':'California city new', 'content': 'this is my updated content by Jossy_Julius'}, synchronize_session= False)
+    # post_query.update ({'title':'California city new', 'content': 'this is my updated content by Jossy_Julius'}, synchronize_session= False)
+    post_query.update(
+    post.dict(),
+    synchronize_session=False
+)
     
     db.commit()
     
