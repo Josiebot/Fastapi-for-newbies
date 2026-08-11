@@ -8,10 +8,13 @@ jobs:
     steps: 
       - name: pulling git repo
         uses: actions/checkout@v2
+        # tHIS SAya Download/check out my GitHub repository onto the GitHub Actions machine.
       # - name: say hi to Jossy
       #   run: echo "you are getting there Jossy"
       - name: Install python version 3.11
         uses: actions/setup-python@v2
+        # here the uses command means Install/set up Python 3.11  on the GitHub Actions machine. @v2 Version of the GitHub Action itself
+
         with: 
           python-version: "3.11"
       - name: update pip
