@@ -83,22 +83,22 @@ jobs:
 
 
 # “Whenever someone pushes code or creates a pull request, start an Ubuntu machine, download my code, install Python 3.9, update pip, and install all the project's dependencies.”
-  deploy:
-    runs-on: ubuntu-latest
-    needs: [build]
+  # deploy:
+  #   runs-on: ubuntu-latest
+  #   needs: [build]
 
-    environment:
-      name: production
+  #   environment:
+  #     name: production
 
-    steps:
-      - name: pulling git repo
-        uses: actions/checkout@v2
-      - name: deploying to Heroku
-        uses: akhileshns/heroku-deploy@v3.15.15 # This is the action
-        with:
-          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: "YOUR APP's NAME" #Must be unique in Heroku
-          heroku_email: "YOUR EMAIL"
+  #   steps:
+  #     - name: pulling git repo
+  #       uses: actions/checkout@v2
+  #     - name: deploying to Heroku
+  #       uses: akhileshns/heroku-deploy@v3.15.15 # This is the action
+  #       with:
+  #         heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+  #         # heroku_app_name: "YOUR APP's NAME" #Must be unique in Heroku
+  #         heroku_email: "YOUR EMAIL"
 
         # pull our github repo
         # install heroku cli
