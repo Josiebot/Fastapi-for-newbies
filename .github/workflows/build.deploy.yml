@@ -87,9 +87,23 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build]
 
+    environment:
+      name: production
+
     steps:
-      - name: deploying stuff
-        run: echo "going to deploy some stuff now Jossy"
+      - name: pulling git repo
+        uses: actions/checkout@v2
+      - name: deploying to Heroku
+        uses: akhileshns/heroku-deploy@v3.15.15 # This is the action
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: "YOUR APP's NAME" #Must be unique in Heroku
+          heroku_email: "YOUR EMAIL"
+
+        # pull our github repo
+        # install heroku cli
+        # add git remore for heroku
+        # git push heroku main
 
 
 
