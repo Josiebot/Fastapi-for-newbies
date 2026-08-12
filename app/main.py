@@ -58,7 +58,7 @@ app.include_router(vote.router)
 
 @app.get("/")
 def root():
-    return {"message": "Hello Jossy, welcome back to this class. Deployed successfully from CI/CD pipeline"}
+    return {"message": "Hello Jossy, welcome back to this class."}
 
 
 # class Post(BaseModel):
