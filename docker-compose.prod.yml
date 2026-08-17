@@ -1,0 +1,306 @@
+version: "3"
+services: 
+# services is the heart of the file. It is more like a container
+  api: 
+    image: jossyjulius/fastapi
+    # build: .
+    # "Use the current directory as the build context and look for the Dockerfile then build the API image/ " Build the api service's image using the Dockerfile found in this directory
+    depends_on:
+        - postgres
+
+    ports: 
+    # port on localhost (8000): por t on container (could be a erver)
+    - "80:8000"
+
+    # volumes: 
+      # - ./:/usr/src/app:ro
+      # - ./:/app:ro
+      # /usr/src/app is simply a directory (folder) inside the Linux container
+
+        # bindmount
+    # command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+    environment:
+      - DATABASE_HOSTNAME=${DATABASE_HOSTNAME}
+      - DATABASE_PORT=${DATABASE_PORT}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_USERNAME=${DATABASE_USERNAME}
+      - SECRET_KEY=${SECRET_KEY}
+      - ALGORITHM=${ALGORITHM}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
+
+  # env_file: 
+    # - ./.env
+    # (in the current directory then .env)
+
+  postgres:
+    image: postgres
+    # Use the PostgreSQL image that is available from an online container registry (Docker Hub)
+    environment:
+        - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+        - POSTGRES_DB=${DATABASE_NAME}
+
+
+    volumes: 
+        - postgres-db:/var/lib/postgresql/data 
+        # Take my persistent Docker volume called postgres-db and mount it at PostgreSQL's data directory."
+        #  Postgres-db - docker volume
+        # /var/lib/postgresql/data  - data directory  HOST DIRECTORY              CONTAINER DIRECTORY
+                                                        # /opt/datadir       →        /var/lib/mysql
+# "Docker, create/manage a volume called postgres-db and connect it to PostgreSQL's data directory."
+# "Docker, create/manage a volume called postgres-db and connect it to PostgreSQL's data directory."
+
+# postgres-db
+#       ↓
+# /var/lib/postgresql/data
+volumes:
+    postgres-db:
+    # ##
+
+# WHAT IS HAPPENING
+# n this case, the FastAPI and PostgreSQL services work together to provide a complete web application. FastAPI acts as the application/backend, receiving requests from users and processing the application logic, while PostgreSQL acts as the database, storing and retrieving the application's data. FastAPI connects to PostgreSQL using the database hostname, port, username, password, and database name provided through the environment variables. In simple terms, FastAPI does the work, while PostgreSQL stores the information that FastAPI needs.
+
+# So FastAPI is the client asking to use the database, and PostgreSQL is the server checking whether FastAPI has the correct credentials
+
+# "Create/manage a named volume called postgres-db.
+    # NOTES
+    # The hostname is not determined by the software inside the container. It's determined by the Compose service name.
+#     Exactly — it doesn't have to be postgres.
+
+# The hostname is normally the service name you gave that service in your docker-compose.yml.
+
+# For example, if you wrote:
+
+# services:
+#   fast_api:
+#     build: .
+
+#   database:
+#     image: postgres
+
+# Then your FastAPI environment variable would be:
+
+# DATABASE_HOSTNAME=database
+
+# Because the service is called:
+
+# database:
+
+# So:
+
+# fast_api container
+#        │
+#        │ hostname = database
+#        ▼
+# database container
+#        │
+#        ▼
+# PostgreSQL
+# Another example
+
+# You could call it:
+
+# services:
+#   api:
+#     build: .
+
+#   my_database:
+#     image: postgres
+
+# Then:
+
+# DATABASE_HOSTNAME=my_database
+
+# Or:
+
+# services:
+#   backend:
+#     build: .
+
+#   db:
+#     image: postgres
+
+# Then:
+
+# DATABASE_HOSTNAME=db
+# The rule to remember 🧠
+
+# Look at:
+
+# services:
+#   api:
+#     ...
+
+#   SOMETHING:
+#     image: postgres
+
+# Then:
+
+# DATABASE_HOSTNAME = SOMETHING
+
+# So in your teacher's example:
+
+# services:
+#   fast_api:
+#     ...
+
+#   postgres:
+#     image: postgres
+
+# Therefore:
+
+# DATABASE_HOSTNAME=postgres
+
+# The hostname is not determined by the software inside the container. It's determined by the Compose service name.
+
+# That's why you could have:
+
+# db:
+#   image: postgres
+
+# and the hostname would be:
+
+# db
+
+# even though the actual software running inside that container is PostgreSQL
+
+
+# 
+# Yes — that second volumes: is very important. It is what tells Docker Compose that postgres-db is a named volume.
+
+# You have two different uses of the word volumes:
+
+# services:
+#   postgres:
+#     volumes:
+#       - postgres-db:/var/lib/postgresql/data
+
+# volumes:
+#   postgres-db:
+
+# They work together.
+
+# 1. The first volumes: — inside postgres
+# services:
+#   postgres:
+#     volumes:
+#       - postgres-db:/var/lib/postgresql/d
+# This says:
+
+# "Mount the volume called postgres-db into the PostgreSQL container at /var/lib/postgresql/data."
+
+# So:
+
+# postgres-db
+#      ↓
+# /var/lib/postgresql/data
+
+# The right side is inside the container.
+
+# 2. The second volumes: — at the bottom
+# volumes:
+#   postgres-db:
+
+# This says:
+
+# "Docker Compose, I want a named volume called postgres-db."
+
+# Docker will create/manage that volume for you.
+
+# You can verify it with:
+
+# docker volume ls
+
+# You should see something similar to:
+
+# DRIVER    VOLUME NAME
+# local     fastapi_postgres-db
+
+# The fastapi_ prefix is often added by Compose because it names volumes according to the project.
+
+# Why do we need both?
+
+# Think of it like creating a storage room and then connecting it to the database.
+
+# volumes:
+#   postgres-db:
+#        ↑
+#        │
+#    "Create/manage this storage"
+
+# Then:
+
+# postgres:
+#   volumes:
+#     - postgres-db:/var/lib/postgresql/data
+#       ↑                         ↑
+#       │                         │
+#       named volume              location
+#       on Docker                 inside Postgres
+
+# Together:
+
+#                  Docker
+#                    │
+#           ┌────────▼────────┐
+#           │  postgres-db    │
+#           │ named volume    │
+#           └────────┬────────┘
+#                    │
+#                    ↓
+#        /var/lib/postgresql/data
+#                    │
+#                    ↓
+#           PostgreSQL container
+# Compare it to your instructor's example
+
+# Your instructor:
+
+# docker run -v /opt/datadir:/var/lib/mysql mysql
+
+# The /opt/datadir already exists as a host directory, so they don't need a separate top-level declaration.
+
+# Yours:
+
+# volumes:
+#   postgres-db:
+
+# creates a Docker-managed named volume, so you declare it at the bottom.
+
+# So that bottom volumes: doesn't mount anything by itself. It declares the named volume that your PostgreSQL service then uses.
+
+
+# //////////////////////////////
+
+# /
+
+# This is the root of the Linux filesystem.
+
+# Think of it as the beginning of the container's folder structure.
+
+# usr
+
+# A standard Linux directory used for software, programs, and related files.
+
+# src
+
+# Short for source. It's commonly used as a place for source code.
+
+# app
+
+# This is simply a folder named app where someone has chosen to put an application.
+
+# So:
+
+# /usr/src/app
+
+# basically means:
+
+# "A folder called app, inside src, inside usr, inside the Linux filesystem."
+
+# Is /usr/src/app special to Docker?
+
+# No. This is important.
+
+# Docker does not require you to use /usr/src/app.
